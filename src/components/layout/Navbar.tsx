@@ -55,8 +55,8 @@ export function Navbar() {
       >
         <nav
           className={cn(
-            'glass rounded-2xl mx-auto max-w-7xl transition-all duration-300',
-            scrolled && 'shadow-lg'
+            'rounded-2xl mx-auto max-w-7xl transition-all duration-300 bg-white border border-black/8',
+            scrolled && 'shadow-lg shadow-black/10'
           )}
           aria-label="Navigation principale"
         >
@@ -65,10 +65,10 @@ export function Navbar() {
             {/* ── Logo ── */}
             <Link
               to="/"
-              className="flex items-center gap-2 font-bold text-[var(--color-primary)] shrink-0"
+              className="flex items-center gap-2 font-bold text-[#09855B] shrink-0"
               aria-label="CECT Togo — Accueil"
             >
-              <div className="h-10 w-10 shrink-0 rounded-xl overflow-hidden dark:bg-white dark:p-0.5">
+              <div className="h-10 w-10 shrink-0 rounded-xl overflow-hidden">
                 <img
                   src="/logos/CECT_logo_transparent.png"
                   alt="CECT Togo logo"
@@ -89,8 +89,8 @@ export function Navbar() {
                       cn(
                         'px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors whitespace-nowrap',
                         isActive
-                          ? 'text-[var(--color-primary)] bg-[var(--color-primary)]/10'
-                          : 'text-[var(--color-text)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/5'
+                          ? 'text-[#09855B] bg-[#09855B]/10'
+                          : 'text-[#0F1A14] hover:text-[#09855B] hover:bg-[#09855B]/5'
                       )
                     }
                   >
@@ -106,7 +106,7 @@ export function Navbar() {
               {/* Language toggle — visible md+ */}
               <button
                 onClick={toggleLanguage}
-                className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 transition-colors"
+                className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-medium text-[#4B5B52] hover:text-[#09855B] hover:bg-[#09855B]/5 transition-colors"
                 title={language === 'fr' ? 'Switch to English' : 'Passer en français'}
                 aria-label={language === 'fr' ? 'Switch to English' : 'Passer en français'}
               >
@@ -119,7 +119,7 @@ export function Navbar() {
               {/* Theme toggle */}
               <button
                 onClick={toggleTheme}
-                className="flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 transition-colors"
+                className="flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-lg text-[#4B5B52] hover:text-[#09855B] hover:bg-[#09855B]/5 transition-colors"
                 aria-label={t('nav.toggleTheme')}
               >
                 {theme === 'dark'
@@ -129,7 +129,7 @@ export function Navbar() {
 
               {/* Auth links — desktop only (xl+) */}
               <div className="hidden xl:flex items-center gap-1.5 ml-1">
-                <Button variant="ghost" size="sm" asChild>
+                <Button variant="ghost" size="sm" asChild className="text-[#0F1A14] hover:text-[#09855B]">
                   <Link to="/connexion">{t('nav.login')}</Link>
                 </Button>
                 <Button size="sm" asChild>
@@ -140,7 +140,7 @@ export function Navbar() {
               {/* Hamburger — visible below xl */}
               <button
                 onClick={() => setMenuOpen((o) => !o)}
-                className="xl:hidden flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-lg text-[var(--color-text)] hover:bg-[var(--color-primary)]/5 transition-colors ml-0.5"
+                className="xl:hidden flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-lg text-[#0F1A14] hover:bg-[#09855B]/5 transition-colors ml-0.5"
                 aria-expanded={menuOpen}
                 aria-controls="mobile-menu"
                 aria-label={menuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
@@ -176,17 +176,17 @@ export function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 280 }}
-              className="fixed top-0 right-0 bottom-0 z-50 w-[min(300px,85vw)] glass flex flex-col rounded-l-3xl shadow-2xl"
+              className="fixed top-0 right-0 bottom-0 z-50 w-[min(300px,85vw)] bg-white flex flex-col rounded-l-3xl shadow-2xl"
               role="dialog"
               aria-modal="true"
               aria-label="Menu de navigation"
             >
               {/* Drawer header */}
-              <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-[var(--color-border)]">
-                <span className="font-bold text-[var(--color-text)]">Menu</span>
+              <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-black/10">
+                <span className="font-bold text-[#0F1A14]">Menu</span>
                 <button
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center justify-center h-8 w-8 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-danger)] hover:bg-[var(--color-danger)]/10 transition-colors"
+                  className="flex items-center justify-center h-8 w-8 rounded-lg text-[#4B5B52] hover:text-[#B42318] hover:bg-[#B42318]/10 transition-colors"
                   aria-label={t('nav.closeMenu')}
                 >
                   <X size={18} aria-hidden />
@@ -205,8 +205,8 @@ export function Navbar() {
                           cn(
                             'flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition-colors',
                             isActive
-                              ? 'text-[var(--color-primary)] bg-[var(--color-primary)]/10'
-                              : 'text-[var(--color-text)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/5'
+                              ? 'text-[#09855B] bg-[#09855B]/10'
+                              : 'text-[#0F1A14] hover:text-[#09855B] hover:bg-[#09855B]/5'
                           )
                         }
                       >
@@ -228,17 +228,17 @@ export function Navbar() {
               </div>
 
               {/* Language + theme footer */}
-              <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--color-border)]">
+              <div className="flex items-center justify-between px-4 py-3 border-t border-black/10">
                 <button
                   onClick={toggleLanguage}
-                  className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
+                  className="flex items-center gap-2 text-sm font-medium text-[#4B5B52] hover:text-[#09855B] transition-colors"
                 >
                   <Languages size={15} aria-hidden />
                   {language === 'fr' ? 'English' : 'Français'}
                 </button>
                 <button
                   onClick={toggleTheme}
-                  className="flex items-center justify-center h-8 w-8 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-primary)] hover:bg-[var(--color-primary)]/5 transition-colors"
+                  className="flex items-center justify-center h-8 w-8 rounded-lg text-[#4B5B52] hover:text-[#09855B] hover:bg-[#09855B]/5 transition-colors"
                   aria-label={t('nav.toggleTheme')}
                 >
                   {theme === 'dark' ? <Sun size={17} aria-hidden /> : <Moon size={17} aria-hidden />}
