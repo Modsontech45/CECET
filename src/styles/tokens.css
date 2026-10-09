@@ -1,0 +1,82 @@
+/* CECT Togo — Design Tokens v4.1 */
+:root {
+  /* ── Brand palette ── */
+  --brand-green-900: #065940;   /* dark shade — footer, deep backgrounds */
+  --brand-green-700: #09855B;   /* primary — buttons, links */
+  --brand-green-600: #09855B;   /* alias for components that reference 600 */
+  --brand-green-500: #09855B;   /* alias for components that reference 500 */
+  --brand-gold-500:  #EFB303;
+  --brand-gold-600:  #C89E25;
+  --brand-gold-700:  #CC9D13;
+
+  /* ── Semantic tokens — light mode ── */
+  --color-primary:       #09855B;
+  --color-primary-hover: #076e4c;
+  --color-secondary:     #EFB303;
+  --color-accent:        #09855B;
+
+  --color-bg:            #FFFFFF;
+  --color-surface:       #F5F8F6;
+  --color-text:          #0F1A14;
+  --color-text-muted:    #4B5B52;
+  --color-border:        #DCE5DF;
+
+  --color-hero-bg:       #09855B;
+  --color-footer-bg:     #065940;
+
+  --color-success: #09855B;
+  --color-warning: #C89E25;
+  --color-danger:  #B42318;
+
+  /* ── Glass navbar — light mode ── */
+  --glass-bg:     rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.35);
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+:root[data-theme="dark"],
+.dark {
+  --color-primary:       #09855B;
+  --color-primary-hover: #076e4c;
+  --color-secondary:     #EFB303;
+  --color-accent:        #EFB303;
+
+  --color-bg:            #081410;
+  --color-surface:       #0f1e17;
+  --color-text:          #E9F1EC;
+  --color-text-muted:    #A7B8AE;
+  --color-border:        #1e3028;
+
+  --color-hero-bg:       #065940;
+  --color-footer-bg:     #041009;
+
+  --color-success: #09855B;
+  --color-warning: #EFB303;
+  --color-danger:  #f87171;
+
+  --glass-bg:     rgba(9, 133, 91, 0.20);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-primary:       #09855B;
+    --color-primary-hover: #076e4c;
+    --color-secondary:     #EFB303;
+    --color-accent:        #EFB303;
+    --color-bg:            #081410;
+    --color-surface:       #0f1e17;
+    --color-text:          #E9F1EC;
+    --color-text-muted:    #A7B8AE;
+    --color-border:        #1e3028;
+    --color-hero-bg:       #065940;
+    --color-footer-bg:     #041009;
+    --color-success: #09855B;
+    --color-warning: #EFB303;
+    --color-danger:  #f87171;
+    --glass-bg:     rgba(9, 133, 91, 0.20);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 8px 32px rgba(0, 0, 0, 0.45);
+  }
+}
