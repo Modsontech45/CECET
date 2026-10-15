@@ -6,12 +6,13 @@ import { ArrowRight, Coins } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { ease, staggerContainer, fadeUp, fadeIn } from '@/lib/motion'
 
-// Three depth slots — front / middle / back
+// Four depth slots — front → back
 // scale simulates depth; no z needed (avoids preserve-3d compositing issues)
 const SLOTS = [
-  { x: 0,   y: 0,   scale: 1.06, brightness: 1,    zIndex: 10 },
-  { x: 55,  y: 50,  scale: 0.95, brightness: 0.80, zIndex: 5  },
-  { x: 110, y: 100, scale: 0.84, brightness: 0.60, zIndex: 1  },
+  { x: 0,   y: 0,   scale: 1.06, brightness: 1,    zIndex: 15 },
+  { x: 50,  y: 45,  scale: 0.93, brightness: 0.78, zIndex: 10 },
+  { x: 100, y: 90,  scale: 0.81, brightness: 0.56, zIndex: 5  },
+  { x: 148, y: 132, scale: 0.70, brightness: 0.38, zIndex: 1  },
 ]
 
 const CARD_TRANSITION = {
@@ -43,6 +44,13 @@ const CARDS = [
     gradient: 'linear-gradient(140deg, #033a24 0%, #011a0e 100%)',
     mountDelay: 0.2,
   },
+  {
+    label: 'Pack Marchand',
+    formulas: 'M1 – M10',
+    sub: 'Personnes morales',
+    gradient: 'linear-gradient(140deg, #011a0e 0%, #000d07 100%)',
+    mountDelay: 0.3,
+  },
 ]
 
 const STATS = [
@@ -57,18 +65,18 @@ export function Hero() {
   // Separate display zIndex — cards going backward keep their high zIndex
   // until the animation completes, so they never disappear mid-flight
   const [displayZ, setDisplayZ] = useState(() =>
-    CARDS.map((_, i) => SLOTS[(i + 3) % 3].zIndex)
+    CARDS.map((_, i) => SLOTS[(i + 4) % 4].zIndex)
   )
 
   useEffect(() => {
     const id = setInterval(() => {
-      setActiveIndex(prev => (prev + 1) % 3)
+      setActiveIndex(prev => (prev + 1) % 4)
     }, 3000)
     return () => clearInterval(id)
   }, [])
 
   useEffect(() => {
-    const targets = CARDS.map((_, i) => SLOTS[(i - activeIndex + 3) % 3].zIndex)
+    const targets = CARDS.map((_, i) => SLOTS[(i - activeIndex + 4) % 4].zIndex)
     // Cards going forward: raise zIndex immediately
     setDisplayZ(prev => targets.map((t, i) => Math.max(t, prev[i])))
     // After animation finishes: lower zIndex for cards that went back
@@ -243,7 +251,7 @@ export function Hero() {
                       />
 
                       {CARDS.map((card, cardIndex) => {
-                        const slotIndex = (cardIndex - activeIndex + 3) % 3
+                        const slotIndex = (cardIndex - activeIndex + 4) % 4
                         const slot = SLOTS[slotIndex]
 
                         return (

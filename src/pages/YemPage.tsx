@@ -1,10 +1,10 @@
 import { Helmet } from 'react-helmet-async'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
-import { Coins, Banknote, ShoppingCart, TriangleAlert, UserCheck, ShoppingBag } from 'lucide-react'
+import { Coins, Banknote, ArrowLeftRight, TriangleAlert, UserCheck, ShoppingBag } from 'lucide-react'
 import { Section } from '@/components/ui/Section'
 import { Card } from '@/components/ui/Card'
-import { YEM_BUY_PRICE, YEM_SELL_PRICE, YEM_DISCOUNT_MIN, YEM_DISCOUNT_MAX, formatFCFA } from '@/data/packs'
+import { YEM_BUY_PRICE, YEM_SELL_PRICE, YEM_TRANSFER_PRICE, YEM_DISCOUNT_MIN, YEM_DISCOUNT_MAX, formatFCFA } from '@/data/packs'
 
 export default function YemPage() {
   const { t } = useTranslation()
@@ -30,11 +30,11 @@ export default function YemPage() {
           <p className="text-lg text-[var(--color-text-muted)] mb-10 text-center">{t('yem.description')}</p>
 
           {/* Key figures */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-4">
             {[
-              { icon: Coins, label: t('yem.buyPrice'), value: `${formatFCFA(YEM_BUY_PRICE).split(' ')[0]} F`, color: 'var(--color-primary)' },
-              { icon: Banknote, label: t('yem.sellPrice'), value: `${formatFCFA(YEM_SELL_PRICE).split(' ')[0]} F`, color: 'var(--color-secondary)' },
-              { icon: ShoppingCart, label: t('yem.discount'), value: `${YEM_DISCOUNT_MIN}–${YEM_DISCOUNT_MAX} %`, color: 'var(--color-accent)' },
+              { icon: Coins,          label: t('yem.buyPrice'),      value: `${formatFCFA(YEM_BUY_PRICE).split(' ')[0]} F`,      color: 'var(--color-primary)' },
+              { icon: Banknote,       label: t('yem.sellPrice'),     value: `${formatFCFA(YEM_SELL_PRICE).split(' ')[0]} F`,     color: 'var(--color-secondary)' },
+              { icon: ArrowLeftRight, label: t('yem.transferPrice'), value: `${formatFCFA(YEM_TRANSFER_PRICE).split(' ')[0]} F`, color: '#7c3aed' },
             ].map(({ icon: Icon, label, value, color }, i) => (
               <motion.div
                 key={label}
@@ -49,6 +49,9 @@ export default function YemPage() {
               </motion.div>
             ))}
           </div>
+          <p className="text-sm text-center mb-12" style={{ color: 'var(--color-text-muted)' }}>
+            Remise consommateur : {YEM_DISCOUNT_MIN}–{YEM_DISCOUNT_MAX} % chez les marchands partenaires (à confirmer par le CA)
+          </p>
 
           {/* Warning */}
           <div className="flex gap-3 p-5 rounded-xl border border-[var(--color-warning)]/40 bg-[var(--color-warning)]/5 mb-12">

@@ -24,6 +24,7 @@ export interface RegisterPayload {
   // Legal only
   legal_name?: string
   legal_form?: string
+  pernum_business?: string
   rccm?: string | null
   nif?: string | null
 }

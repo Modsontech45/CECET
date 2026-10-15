@@ -37,11 +37,10 @@ export default function LoginPage() {
     setApiError(null)
     try {
       const result = await login(data.identifier, data.password)
-      if (result.otpRequired && result.challenge) {
-        setChallenge({ id: result.challenge.challenge_id, sentTo: result.challenge.sent_to })
+      if (result.status === 'otp_required') {
+        setChallenge({ id: result.challengeId, sentTo: result.sentTo })
         return
       }
-      if (!result.ok) { setApiError('Identifiant ou mot de passe incorrect.'); return }
       navigate(result.redirectTo, { replace: true })
     } catch (err) {
       setApiError(extractApiError(err).message)
@@ -110,7 +109,7 @@ export default function LoginPage() {
                 </p>
               )}
 
-              <Button type="submit" className="w-full" size="lg" disabled={otpForm.formState.isSubmitting}>
+              <Button type="submit" className="w-full" size="lg" loading={otpForm.formState.isSubmitting}>
                 <Lock size={16} aria-hidden /> Valider
               </Button>
 
@@ -179,7 +178,7 @@ export default function LoginPage() {
                 </p>
               )}
 
-              <Button type="submit" className="w-full" size="lg" disabled={loginForm.formState.isSubmitting}>
+              <Button type="submit" className="w-full" size="lg" loading={loginForm.formState.isSubmitting}>
                 <Lock size={16} aria-hidden />
                 {t('auth.login.submit')}
               </Button>

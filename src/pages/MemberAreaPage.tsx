@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -15,6 +15,7 @@ import {
   ArrowUpRight, ArrowDownLeft, TrendingUp, TrendingDown,
   CreditCard, CheckCircle2, Clock, AlertTriangle, ChevronRight,
   Wallet, BadgeCheck, XCircle, RefreshCw, Pencil, Save, X,
+  List, FileText, Bell, Receipt, Download, BarChart2, ScanLine,
 } from 'lucide-react'
 import { useAuth } from '@/app/AuthContext'
 import { getDashboard } from '@/services/memberService'
@@ -36,20 +37,24 @@ function fmtShortDate(iso: string) {
 // ── navigation ────────────────────────────────────────────────────────────────
 
 const TABS = [
-  { id: 'dashboard', label: 'Accueil',   mobileLabel: 'Accueil',  icon: LayoutDashboard },
-  { id: 'packs',     label: 'Mes packs', mobileLabel: 'Packs',    icon: Package },
-  { id: 'yem',       label: 'YEM',       mobileLabel: 'YEM',      icon: Coins },
-  { id: 'pay',       label: 'Payer',     mobileLabel: 'Payer',    icon: Store },
-  { id: 'profile',   label: 'Profil',    mobileLabel: 'Profil',   icon: User },
+  { id: 'dashboard',    label: 'Accueil',       mobileLabel: 'Accueil',   icon: LayoutDashboard },
+  { id: 'packs',        label: 'Mes packs',     mobileLabel: 'Packs',     icon: Package },
+  { id: 'yem',          label: 'YEM',           mobileLabel: 'YEM',       icon: Coins },
+  { id: 'transactions', label: 'Transactions',  mobileLabel: 'Transact.', icon: List },
+  { id: 'pay',          label: 'Payer',         mobileLabel: 'Payer',     icon: Store },
+  { id: 'documents',    label: 'Documents',     mobileLabel: 'Docs',      icon: FileText },
+  { id: 'profile',      label: 'Profil',        mobileLabel: 'Profil',    icon: User },
 ] as const
 type TabId = typeof TABS[number]['id']
 
 const TAB_LABELS: Record<TabId, string> = {
-  dashboard: 'Tableau de bord',
-  packs:     'Mes packs',
-  yem:       'YEM',
-  pay:       'Payer un marchand',
-  profile:   'Mon profil',
+  dashboard:    'Tableau de bord',
+  packs:        'Mes packs',
+  yem:          'YEM',
+  transactions: 'Transactions',
+  pay:          'Payer un marchand',
+  documents:    'Documents',
+  profile:      'Mon profil',
 }
 
 // ── tab content transition ────────────────────────────────────────────────────
@@ -245,6 +250,37 @@ function TabDashboard({ dash, onTab }: { dash: DashData | undefined; onTab: (t: 
         </div>
       )}
 
+      {/* Notifications */}
+      <div>
+        <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--color-text-muted)' }}>Notifications</p>
+        <div className="space-y-2">
+          {(dash?.membership?.status === 'pending_payment' || dash?.membership?.status === 'pending_activation') && (
+            <div className="flex items-start gap-3 p-3.5 rounded-xl border" style={{ borderColor: '#d97706', background: '#fdf1e1' }}>
+              <Bell size={15} className="shrink-0 mt-0.5" style={{ color: '#d97706' }} aria-hidden />
+              <div>
+                <p className="text-sm font-semibold" style={{ color: '#92400e' }}>Adhésion en attente</p>
+                <p className="text-xs mt-0.5" style={{ color: '#92400e' }}>Votre paiement d'adhésion est en cours de vérification par la CECT.</p>
+              </div>
+            </div>
+          )}
+          {(dash?.active_packs ?? []).length === 0 && dash?.membership?.status === 'active' && (
+            <div className="flex items-start gap-3 p-3.5 rounded-xl border" style={{ borderColor: 'var(--color-border)', background: 'var(--color-surface)' }}>
+              <Bell size={15} className="shrink-0 mt-0.5" style={{ color: 'var(--color-primary)' }} aria-hidden />
+              <div>
+                <p className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>Aucun pack actif</p>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>Souscrivez à un pack pour accéder aux fonctionnalités YEM.</p>
+              </div>
+            </div>
+          )}
+          {(dash?.payments_awaiting_action ?? []).length === 0 && (dash?.active_packs ?? []).length > 0 && dash?.membership?.status === 'active' && (
+            <div className="flex items-start gap-3 p-3.5 rounded-xl border" style={{ borderColor: 'var(--color-border)', background: 'var(--color-surface)' }}>
+              <CheckCircle2 size={15} className="shrink-0 mt-0.5" style={{ color: 'var(--color-success)' }} aria-hidden />
+              <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Aucune notification en attente.</p>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Quick actions */}
       <div>
         <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--color-text-muted)' }}>Actions rapides</p>
@@ -342,6 +378,8 @@ function TabPacks({ dash }: { dash: DashData | undefined }) {
               {available !== null && <div><p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Disponible</p><p className="font-bold tabular-nums text-sm" style={{ color: 'var(--color-text)' }}>{fmt(available)} YEM</p></div>}
               {quota     !== null && <div><p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Quota / période</p><p className="font-bold tabular-nums text-sm" style={{ color: 'var(--color-text)' }}>{fmt(quota)} YEM</p></div>}
               {discount  !== null && <div><p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Remise</p><p className="font-bold text-sm" style={{ color: 'var(--color-text)' }}>{discount} %</p></div>}
+              {(pack as any).total_credited !== undefined && <div><p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Acquis</p><p className="font-bold tabular-nums text-sm" style={{ color: 'var(--color-text)' }}>{fmt(parseFloat(String((pack as any).total_credited)))} YEM</p></div>}
+              {(pack as any).total_spent    !== undefined && <div><p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Consommé</p><p className="font-bold tabular-nums text-sm" style={{ color: 'var(--color-text)' }}>{fmt(parseFloat(String((pack as any).total_spent)))} YEM</p></div>}
               {pack.activated_at  && <div><p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Activé le</p><p className="font-medium text-sm" style={{ color: 'var(--color-text)' }}>{fmtDate(pack.activated_at)}</p></div>}
               {pack.expires_at    && <div><p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Expire le</p><p className="font-medium text-sm" style={{ color: 'var(--color-text)' }}>{fmtDate(pack.expires_at)}</p></div>}
             </div>
@@ -406,6 +444,10 @@ function TabYem({ dash }: { dash: DashData | undefined }) {
             <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Vente YEM</p>
             <p className="font-bold" style={{ color: '#2563eb' }}>650 FCFA / YEM</p>
           </div>
+          <div>
+            <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Cession YEM</p>
+            <p className="font-bold" style={{ color: '#7c3aed' }}>610 FCFA / YEM</p>
+          </div>
         </div>
         <p className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
           Le YEM n'a pas cours légal au Togo. Cours indicatif.
@@ -436,6 +478,105 @@ function TabYem({ dash }: { dash: DashData | undefined }) {
   )
 }
 
+// ── QR Scanner ────────────────────────────────────────────────────────────────
+
+function QrScanner({ onResult, onClose }: { onResult: (code: string) => void; onClose: () => void }) {
+  const videoRef  = useRef<HTMLVideoElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const streamRef = useRef<MediaStream | null>(null)
+  const rafRef    = useRef<number>(0)
+  const [camErr, setCamErr] = useState<string | null>(null)
+
+  const scan = useCallback(() => {
+    const video  = videoRef.current
+    const canvas = canvasRef.current
+    if (!video || !canvas || video.readyState !== video.HAVE_ENOUGH_DATA) {
+      rafRef.current = requestAnimationFrame(scan)
+      return
+    }
+    canvas.width  = video.videoWidth
+    canvas.height = video.videoHeight
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+    import('jsqr').then(({ default: jsQR }) => {
+      const result = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: 'dontInvert' })
+      if (result?.data) {
+        stopStream()
+        onResult(result.data)
+      } else {
+        rafRef.current = requestAnimationFrame(scan)
+      }
+    })
+  }, [onResult])
+
+  function stopStream() {
+    cancelAnimationFrame(rafRef.current)
+    streamRef.current?.getTracks().forEach(t => t.stop())
+  }
+
+  useEffect(() => {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(stream => {
+        streamRef.current = stream
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream
+          videoRef.current.play()
+          rafRef.current = requestAnimationFrame(scan)
+        }
+      })
+      .catch(() => setCamErr("Accès à la caméra refusé. Autorisez la caméra dans les paramètres de votre navigateur."))
+    return () => stopStream()
+  }, [scan])
+
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col" style={{ background: 'rgba(0,0,0,0.92)' }}>
+      <div className="flex items-center justify-between px-4 py-3 shrink-0">
+        <p className="text-white font-semibold text-sm">Scanner le QR marchand</p>
+        <button onClick={() => { stopStream(); onClose() }}
+          className="h-8 w-8 flex items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/25 transition-colors"
+          aria-label="Fermer le scanner">
+          <X size={16} aria-hidden />
+        </button>
+      </div>
+
+      <div className="flex-1 flex flex-col items-center justify-center px-4 gap-4">
+        {camErr ? (
+          <div className="text-center max-w-xs">
+            <p className="text-white/80 text-sm">{camErr}</p>
+            <button onClick={() => { stopStream(); onClose() }}
+              className="mt-4 px-4 py-2 rounded-xl bg-white/15 text-white text-sm font-semibold hover:bg-white/25 transition-colors">
+              Fermer
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* Viewfinder */}
+            <div className="relative w-full max-w-xs aspect-square rounded-2xl overflow-hidden border-2 border-white/30">
+              <video ref={videoRef} className="w-full h-full object-cover" playsInline muted aria-hidden />
+              <canvas ref={canvasRef} className="hidden" aria-hidden />
+              {/* Corner guides */}
+              {['top-0 left-0', 'top-0 right-0', 'bottom-0 left-0', 'bottom-0 right-0'].map((pos, i) => (
+                <div key={i} className={`absolute ${pos} w-8 h-8`}
+                  style={{
+                    borderTop:    i < 2 ? '3px solid #09855B' : undefined,
+                    borderBottom: i >= 2 ? '3px solid #09855B' : undefined,
+                    borderLeft:   i % 2 === 0 ? '3px solid #09855B' : undefined,
+                    borderRight:  i % 2 === 1 ? '3px solid #09855B' : undefined,
+                  }} />
+              ))}
+              {/* Scan line animation */}
+              <div className="absolute inset-x-0 h-0.5 animate-bounce" style={{ top: '50%', background: '#09855B', opacity: 0.8 }} />
+            </div>
+            <p className="text-white/60 text-xs text-center">Pointez la caméra vers le QR code du marchand</p>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ── Tab: Payer ────────────────────────────────────────────────────────────────
 
 function TabPay({ dash }: { dash: DashData | undefined }) {
@@ -443,15 +584,17 @@ function TabPay({ dash }: { dash: DashData | undefined }) {
   const [merchantInfo, setMerchantInfo] = useState<{ name: string; outlet?: string; pernum: string } | null>(null)
   const [checking, setChecking] = useState(false)
   const [err, setErr] = useState<string | null>(null)
+  const [scanning, setScanning] = useState(false)
 
   const inputCls = 'w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-3 text-sm text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-shadow'
 
-  async function lookupMerchant() {
-    if (!code.trim()) return
+  async function lookupMerchant(overrideCode?: string) {
+    const target = (overrideCode ?? code).trim()
+    if (!target) return
     setChecking(true); setErr(null); setMerchantInfo(null)
     try {
       const res = await api.get<{ data: { merchant: { name: string; outlet_label?: string }; pernum: string } }>(
-        `/merchant-payments/qr/${code.trim()}`
+        `/merchant-payments/qr/${target}`
       )
       setMerchantInfo({ name: res.data.data.merchant.name, outlet: res.data.data.merchant.outlet_label, pernum: res.data.data.pernum })
     } catch (e: any) {
@@ -464,10 +607,19 @@ function TabPay({ dash }: { dash: DashData | undefined }) {
     }
   }
 
+  function handleScanResult(scanned: string) {
+    setScanning(false)
+    setCode(scanned)
+    lookupMerchant(scanned)
+  }
+
   const hasPack = (dash?.active_packs ?? []).some(p => ['CONSOMMATEUR', 'PERSONNEL'].includes(p.family))
 
   return (
-    <div className="space-y-4">
+    <>
+      {scanning && <QrScanner onResult={handleScanResult} onClose={() => setScanning(false)} />}
+
+      <div className="space-y-4">
       <div className="rounded-2xl border p-4 sm:p-5 space-y-4" style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
         <div>
           <p className="font-semibold mb-1" style={{ color: 'var(--color-text)' }}>Code marchand</p>
@@ -477,7 +629,13 @@ function TabPay({ dash }: { dash: DashData | undefined }) {
           <div className="flex gap-2">
             <input value={code} onChange={(e) => setCode(e.target.value)} className={inputCls}
               placeholder="ex. MARC-ABCD-1234" onKeyDown={(e) => e.key === 'Enter' && lookupMerchant()} />
-            <button onClick={lookupMerchant} disabled={!code.trim() || checking}
+            <button onClick={() => setScanning(true)}
+              className="shrink-0 px-3 py-3 rounded-xl border transition-colors active:scale-95"
+              style={{ borderColor: 'var(--color-border)', background: 'var(--color-surface)', color: 'var(--color-primary)' }}
+              title="Scanner le QR" aria-label="Scanner le QR marchand">
+              <ScanLine size={18} aria-hidden />
+            </button>
+            <button onClick={() => lookupMerchant()} disabled={!code.trim() || checking}
               className="shrink-0 px-4 py-3 rounded-xl text-white text-sm font-bold transition-opacity disabled:opacity-50 active:scale-95"
               style={{ background: 'var(--color-primary)' }}>
               {checking ? <RefreshCw size={16} className="animate-spin" aria-hidden /> : 'Vérifier'}
@@ -523,6 +681,7 @@ function TabPay({ dash }: { dash: DashData | undefined }) {
         ))}
       </div>
     </div>
+    </>
   )
 }
 
@@ -579,6 +738,7 @@ function TabProfile({ dash, onRefresh }: { dash: DashData | undefined; onRefresh
   const INFO_ROWS = [
     { label: 'Nom complet', value: profile?.name },
     { label: 'Pernum',      value: profile?.pernum },
+    ...(profile?.person_type === 'legal' ? [{ label: 'Pernum Business', value: (profile as any)?.pernum_business }] : []),
     { label: 'N° membre',   value: profile?.member_number },
     { label: 'Type',        value: profile?.person_type === 'natural' ? 'Personne physique' : 'Personne morale' },
     { label: 'E-mail',      value: profile?.email },
@@ -681,6 +841,140 @@ function TabProfile({ dash, onRefresh }: { dash: DashData | undefined; onRefresh
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Tab: Transactions ─────────────────────────────────────────────────────────
+
+function TabTransactions({ dash }: { dash: DashData | undefined }) {
+  const movements = dash?.recent_movements ?? []
+
+  const STATUS_MAP: Record<string, { label: string; color: string }> = {
+    completed: { label: 'Complété',         color: 'var(--color-success)' },
+    pending:   { label: 'En attente',       color: '#d97706' },
+    verifying: { label: 'En vérification',  color: '#2563eb' },
+    cancelled: { label: 'Annulé',           color: 'var(--color-danger)' },
+    disputed:  { label: 'Litige',           color: 'var(--color-danger)' },
+  }
+
+  return (
+    <div className="space-y-4">
+      <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
+        Historique des transactions
+      </p>
+
+      {movements.length === 0 ? (
+        <div className="rounded-2xl border p-10 text-center" style={{ borderColor: 'var(--color-border)', background: 'var(--color-surface)' }}>
+          <List size={40} className="mx-auto mb-3" style={{ color: 'var(--color-text-muted)' }} aria-hidden />
+          <p className="font-semibold mb-1" style={{ color: 'var(--color-text)' }}>Aucune transaction</p>
+          <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>Vos opérations YEM apparaîtront ici.</p>
+        </div>
+      ) : (
+        <div className="rounded-2xl border overflow-hidden" style={{ borderColor: 'var(--color-border)' }}>
+          <div className="hidden sm:grid grid-cols-[1fr_120px_100px_80px] gap-3 px-4 py-2.5 text-xs font-bold uppercase tracking-widest"
+            style={{ background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)', color: 'var(--color-text-muted)' }}>
+            <span>Opération</span>
+            <span>Date</span>
+            <span className="text-right">Quantité</span>
+            <span className="text-right">Statut</span>
+          </div>
+          {movements.map((m, i) => {
+            const st = STATUS_MAP[(m as any).status ?? 'completed'] ?? STATUS_MAP.completed
+            return (
+              <div key={m.id}
+                className="flex sm:grid sm:grid-cols-[1fr_120px_100px_80px] items-center gap-3 px-4 py-3"
+                style={{ background: 'var(--color-surface)', borderBottom: i < movements.length - 1 ? '1px solid var(--color-border)' : undefined }}>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="h-8 w-8 rounded-xl flex items-center justify-center shrink-0"
+                    style={m.direction === 'credit'
+                      ? { background: 'var(--color-success)18', color: 'var(--color-success)' }
+                      : { background: 'var(--color-danger)18',  color: 'var(--color-danger)' }}>
+                    {m.direction === 'credit' ? <ArrowDownLeft size={13} aria-hidden /> : <ArrowUpRight size={13} aria-hidden />}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate" style={{ color: 'var(--color-text)' }}>{m.label}</p>
+                    <p className="text-xs sm:hidden" style={{ color: 'var(--color-text-muted)' }}>{fmtDate(m.date)}</p>
+                  </div>
+                </div>
+                <p className="hidden sm:block text-xs" style={{ color: 'var(--color-text-muted)' }}>{fmtDate(m.date)}</p>
+                <p className="hidden sm:block text-sm font-bold tabular-nums text-right"
+                  style={{ color: m.direction === 'credit' ? 'var(--color-success)' : 'var(--color-danger)' }}>
+                  {m.direction === 'credit' ? '+' : '−'}{fmt(m.quantity)} YEM
+                </p>
+                <div className="hidden sm:flex justify-end">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
+                    style={{ color: st.color, background: `${st.color}18` }}>
+                    {st.label}
+                  </span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <p className="text-xs text-center" style={{ color: 'var(--color-text-muted)' }}>
+        L'historique complet est disponible sur demande auprès de la CECT.
+      </p>
+    </div>
+  )
+}
+
+// ── Tab: Documents ────────────────────────────────────────────────────────────
+
+function TabDocuments() {
+  const DOCS = [
+    { label: "Fiche d'adhésion",     desc: "Votre bulletin d'adhésion signé",       icon: FileText,  status: 'available' },
+    { label: 'Reçu de cotisation',   desc: "Preuve de paiement de l'adhésion",      icon: Receipt,   status: 'pending' },
+    { label: 'Relevé de compte YEM', desc: 'Historique de vos mouvements YEM',      icon: List,      status: 'pending' },
+    { label: 'Rapport personnel',    desc: 'Résumé de votre activité dans la CECT', icon: BarChart2, status: 'pending' },
+  ]
+
+  return (
+    <div className="space-y-4">
+      <p className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
+        Mes documents
+      </p>
+
+      <div className="space-y-2">
+        {DOCS.map(({ label, desc, icon: Icon, status }) => (
+          <div key={label}
+            className="flex items-center gap-3 p-4 rounded-2xl border"
+            style={{ background: 'var(--color-surface)', borderColor: 'var(--color-border)' }}>
+            <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: 'var(--color-primary)12', color: 'var(--color-primary)' }}>
+              <Icon size={18} aria-hidden />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm" style={{ color: 'var(--color-text)' }}>{label}</p>
+              <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{desc}</p>
+            </div>
+            {status === 'available' ? (
+              <button
+                className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-opacity active:scale-95"
+                style={{ background: 'var(--color-primary)' }}
+                onClick={() => alert('Téléchargement disponible prochainement.')}>
+                <Download size={13} aria-hidden /> Télécharger
+              </button>
+            ) : (
+              <span className="shrink-0 text-xs px-2.5 py-1 rounded-full font-semibold"
+                style={{ background: '#fdf1e1', color: '#d97706' }}>
+                Bientôt
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="rounded-xl border p-4" style={{ borderColor: 'var(--color-border)', background: 'var(--color-surface)' }}>
+        <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+          Pour demander un document spécifique, contactez la CECT à{' '}
+          <a href="mailto:contact@cecttogo.org" className="underline" style={{ color: 'var(--color-primary)' }}>
+            contact@cecttogo.org
+          </a>
+        </p>
       </div>
     </div>
   )
@@ -805,11 +1099,13 @@ export default function MemberAreaPage() {
           ) : (
             <AnimatePresence mode="wait" initial={false}>
               <motion.div key={activeTab} variants={tabVariants} initial="initial" animate="enter" exit="exit">
-                {activeTab === 'dashboard' && <TabDashboard dash={dash} onTab={setActiveTab} />}
-                {activeTab === 'packs'     && <TabPacks     dash={dash} />}
-                {activeTab === 'yem'       && <TabYem       dash={dash} />}
-                {activeTab === 'pay'       && <TabPay       dash={dash} />}
-{activeTab === 'profile'   && <TabProfile   dash={dash} onRefresh={refetch} />}
+                {activeTab === 'dashboard'    && <TabDashboard    dash={dash} onTab={setActiveTab} />}
+                {activeTab === 'packs'        && <TabPacks        dash={dash} />}
+                {activeTab === 'yem'          && <TabYem          dash={dash} />}
+                {activeTab === 'transactions' && <TabTransactions dash={dash} />}
+                {activeTab === 'pay'          && <TabPay          dash={dash} />}
+                {activeTab === 'documents'    && <TabDocuments />}
+                {activeTab === 'profile'      && <TabProfile      dash={dash} onRefresh={refetch} />}
               </motion.div>
             </AnimatePresence>
           )}

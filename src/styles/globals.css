@@ -15,7 +15,8 @@
   body {
     background-color: var(--color-bg);
     color: var(--color-text);
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Plus Jakarta Sans Variable', system-ui, sans-serif;
+    font-feature-settings: 'tnum' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -40,6 +41,19 @@
       background: var(--color-surface);
       opacity: 0.97;
     }
+  }
+
+  /* Défilement discret pour la barre latérale (sur fond vert foncé) */
+  .sidebar-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+  }
+  .sidebar-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.28);
+    border-radius: 999px;
   }
 
   .text-balance {

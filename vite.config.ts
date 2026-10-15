@@ -4,7 +4,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig(({ mode }) => {
   const env    = loadEnv(mode, process.cwd(), '')
-  const target = env.VITE_API_PROXY_TARGET ?? 'https://api.13-49-18-61.sslip.io'
+  const target = env.VITE_API_PROXY_TARGET ?? 'http://localhost:8000'
 
   return {
     plugins: [react()],

@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Smartphone, Banknote, Eye, EyeOff, MailCheck } from 'lucide-react'
+import { Smartphone, Banknote, Eye, EyeOff, MailCheck, Clock } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useAuth } from '@/app/AuthContext'
 import { register as apiRegister } from '@/services/authService'
@@ -29,6 +29,7 @@ const schema = z.object({
   personType: z.enum(['natural', 'legal']),
   companyName: z.string().optional(),
   legalStatus: z.string().optional(),
+  pernumBusiness: z.string().regex(/^[A-Za-z0-9._-]{3,64}$/).optional(),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   pernum: z.string().regex(/^[A-Za-z0-9._-]{3,64}$/, { message: 'Pernum invalide (3-64 caractères alphanumériques)' }),
@@ -53,7 +54,7 @@ const STEPS = ['step1', 'step2', 'step3', 'step4'] as const
 export default function RegisterPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { submitOtp } = useAuth()
+  const { submitOtp, user } = useAuth()
   const [step, setStep] = useState(0)
   const [apiError, setApiError] = useState<string | null>(null)
   const [showPwd, setShowPwd] = useState(false)
@@ -70,7 +71,7 @@ export default function RegisterPage() {
   const personType = watch('personType')
 
   const STEP_FIELDS: (keyof FormData)[][] = [
-    ['personType', 'firstName', 'lastName', 'pernum', 'countryCode', 'phone', 'email', 'password', 'confirmPassword'],
+    ['personType', 'firstName', 'lastName', 'pernum', 'pernumBusiness', 'countryCode', 'phone', 'email', 'password', 'confirmPassword'],
     ['paymentMethod'],
     ['commitment'],
     ['location', 'date'],
@@ -102,6 +103,7 @@ export default function RegisterPage() {
         ...(data.personType === 'legal' && {
           legal_name: data.companyName,
           legal_form: data.legalStatus,
+          pernum_business: data.pernumBusiness,
         }),
       })
       setOtpChallenge(result.verification)
@@ -126,6 +128,27 @@ export default function RegisterPage() {
 
   const inputClass =
     'w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-shadow'
+
+  /* ── Pending payment screen (already registered, awaiting payment confirmation) ── */
+  if (user && (user as any).status === 'pending_payment') {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center px-4">
+        <div className="w-full max-w-sm text-center">
+          <Clock size={52} className="mx-auto mb-4" style={{ color: '#d97706' }} aria-hidden />
+          <h1 className="text-xl font-bold mb-2" style={{ color: 'var(--color-text)' }}>Adhésion en attente de paiement</h1>
+          <p className="text-sm mb-6" style={{ color: 'var(--color-text-muted)' }}>
+            Votre compte a été créé. La CECT va vérifier votre paiement d'adhésion (25 000 FCFA ou 200 000 FCFA). Vous recevrez un e-mail à l'activation.
+          </p>
+          <div className="p-4 rounded-xl border border-amber-200 bg-amber-50 text-left space-y-2 text-sm mb-6">
+            <p style={{ color: '#92400e' }}><strong>Montant :</strong> 25 000 FCFA (personne physique) ou 200 000 FCFA (personne morale)</p>
+            <p style={{ color: '#92400e' }}><strong>Modes :</strong> T-Money, Flooz, virement bancaire ou espèces</p>
+            <p className="text-xs" style={{ color: '#92400e' }}>Contactez la CECT si vous avez déjà réglé et n'avez pas reçu de confirmation.</p>
+          </div>
+          <Button className="w-full" asChild><Link to="/">Retour à l'accueil</Link></Button>
+        </div>
+      </div>
+    )
+  }
 
   /* ── OTP verification screen ── */
   if (otpChallenge) {
@@ -217,6 +240,12 @@ export default function RegisterPage() {
                         <select {...register('legalStatus')} className={inputClass}>
                           {LEGAL_STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                         </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-[var(--color-text)] mb-1.5">Pernum Business *</label>
+                        <input {...register('pernumBusiness')} className={inputClass} placeholder="pernum-business" />
+                        <p className="mt-1 text-xs" style={{ color: 'var(--color-text-muted)' }}>Identifiant YEM de la personne morale (Pernum Business)</p>
+                        {errors.pernumBusiness && <p className="mt-1 text-xs" style={{ color: 'var(--color-danger)' }}>Pernum Business invalide</p>}
                       </div>
                     </>
                   )}
