@@ -25,6 +25,7 @@ const MemberHomePage   = lazy(() => import('@/pages/member/HomePage'))
 const ActivityPage     = lazy(() => import('@/pages/member/ActivityPage'))
 const ProfilePage      = lazy(() => import('@/pages/member/ProfilePage'))
 const MembershipPage   = lazy(() => import('@/pages/member/MembershipPage'))
+const KycPage          = lazy(() => import('@/pages/member/KycPage'))
 const PacksCatalogPage = lazy(() => import('@/pages/member/PacksCatalogPage'))
 const PayMerchantPage  = lazy(() => import('@/pages/member/PayMerchantPage'))
 const SellYemPage      = lazy(() => import('@/pages/member/SellYemPage'))
@@ -86,6 +87,7 @@ const router = createBrowserRouter([
       { path: 'activite',     element: <S><ActivityPage /></S> },
       { path: 'profil',       element: <S><ProfilePage /></S> },
       { path: 'adhesion',     element: <S><MembershipPage /></S> },
+      { path: 'kyc',          element: <S><KycPage /></S> },
       { path: 'packs',        element: <S><PacksCatalogPage /></S> },
       { path: 'payer',        element: <S><PayMerchantPage /></S> },
       { path: 'vendre',       element: <S><SellYemPage /></S> },

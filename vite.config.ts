@@ -20,11 +20,13 @@ export default defineConfig(({ mode }) => {
           target,
           changeOrigin: true,
           secure: false,
+          cookieDomainRewrite: 'localhost',
         },
         '/sanctum': {
           target,
           changeOrigin: true,
           secure: false,
+          cookieDomainRewrite: 'localhost',
         },
       },
     },

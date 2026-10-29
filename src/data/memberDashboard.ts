@@ -101,17 +101,17 @@ interface ApiDashboard {
 }
 
 const MERCHANT_STEPS: OperationInProgress['steps'] = [
-  { label: 'Intention creee', description: 'YEM reserves sur votre pack' },
-  { label: 'Transfert effectue', description: 'Vous envoyez les YEM au marchand' },
-  { label: 'Confirmation du marchand', description: 'En attente de sa reception' },
-  { label: 'Paiement finalise', description: 'Quota consomme' },
+  { label: 'Intention créée', description: 'YEM réservés sur votre pack' },
+  { label: 'Transfert effectué', description: 'Vous envoyez les YEM au marchand' },
+  { label: 'Confirmation du marchand', description: 'En attente de sa réception' },
+  { label: 'Paiement finalisé', description: 'Quota consommé' },
 ]
 
 const EXCHANGE_STEPS: OperationInProgress['steps'] = [
-  { label: 'Demande creee', description: 'YEM reserves sur votre pack' },
-  { label: 'YEM envoyes', description: 'Vous transferez les YEM a la CECT' },
-  { label: 'Reception controlee', description: 'Un validateur confirme la reception' },
-  { label: 'Versement', description: 'Le montant est verse en FCFA' },
+  { label: 'Demande créée', description: 'YEM réservés sur votre pack' },
+  { label: 'YEM envoyés', description: 'Vous transférez les YEM à la CECT' },
+  { label: 'Réception contrôlée', description: 'Un validateur confirme la réception' },
+  { label: 'Versement', description: 'Le montant est versé en FCFA' },
 ]
 
 function stepOf(status: string): number {
@@ -163,11 +163,11 @@ export async function fetchMemberDashboard(): Promise<MemberDashboardData> {
     label:
       operation.type === 'merchant_payment'
         ? operation.label
-          ? `Paiement a ${operation.label}`
-          : 'Paiement a un marchand'
+          ? `Paiement à ${operation.label}`
+          : 'Paiement à un marchand'
         : operation.kind === 'merchant_redemption'
-          ? 'Reechange de YEM vers la CECT'
-          : 'Vente de YEM a la CECT',
+          ? 'Rééchange de YEM vers la CECT'
+          : 'Vente de YEM à la CECT',
     quantity: operation.quantity,
     status: operation.status,
     step: stepOf(operation.status),
@@ -189,8 +189,8 @@ export async function fetchMemberDashboard(): Promise<MemberDashboardData> {
       pernum: api.profile.pernum ?? api.profile.member_number ?? '',
       member_number: api.profile.member_number,
       email: api.profile.email,
-      phone: api.profile.phone ?? '-',
-      city: api.profile.city ?? '-',
+      phone: api.profile.phone ?? '—',
+      city: api.profile.city ?? '—',
       kind: api.profile.person_type === 'legal' ? 'legal' : 'natural',
       member_since: api.membership?.member_since ?? null,
     },

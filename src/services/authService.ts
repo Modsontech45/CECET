@@ -1,4 +1,4 @@
-import { api, ensureCsrf } from '@/lib/api'
+import { api, ensureCsrfCookie as ensureCsrf } from '@/lib/api'
 import type { LoginResponse, RegisterResponse, AccessTokenResource, OtpChallengeResource } from '@/lib/apiTypes'
 
 export interface LoginPayload {

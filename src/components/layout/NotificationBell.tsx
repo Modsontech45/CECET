@@ -14,10 +14,11 @@ interface Notif {
   created_at: string
 }
 
-function toneFor(type: string) {
-  if (type.includes('success') || type.includes('confirm') || type.includes('activ')) return TONES.success
-  if (type.includes('warn') || type.includes('pending') || type.includes('await')) return TONES.warning
-  if (type.includes('err') || type.includes('fail') || type.includes('reject')) return TONES.danger
+function toneFor(type: string | null | undefined) {
+  const t = type ?? ''
+  if (t.includes('success') || t.includes('confirm') || t.includes('activ')) return TONES.success
+  if (t.includes('warn') || t.includes('pending') || t.includes('await')) return TONES.warning
+  if (t.includes('err') || t.includes('fail') || t.includes('reject')) return TONES.danger
   return TONES.info
 }
 
