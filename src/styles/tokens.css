@@ -154,9 +154,9 @@
 
 /* ── Espaces connectés (membre) : identité « Forêt & or », aplats uniquement ── */
 :root.app-forest {
-  --forest-900: #257D4B;
-  --forest-700: #1e6b3e;
-  --forest-500: #2d8f56;
+  --forest-900: #05190E;
+  --forest-700: #0a2b18;
+  --forest-500: #133d25;
 
   /* Vault gold — remplace le vert lime, plus mature/financier */
   --lime:       #C9922A;
@@ -195,9 +195,9 @@
 }
 
 :root.app-forest[data-theme='dark'] {
-  --forest-900: #257D4B;
-  --forest-700: #1e6b3e;
-  --forest-500: #2d8f56;
+  --forest-900: #05190E;
+  --forest-700: #0a2b18;
+  --forest-500: #133d25;
   --color-primary: #0b8a5a;
   --color-primary-hover: #0a7a50;
   --color-bg: #060e09;
