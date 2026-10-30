@@ -2,6 +2,11 @@ import './lib/i18n'
 import '@fontsource-variable/plus-jakarta-sans'
 import './styles/globals.css'
 
+// After a new deploy, old hashed chunk URLs no longer exist — reload automatically.
+window.addEventListener('vite:preloadError', () => {
+  window.location.reload()
+})
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { HelmetProvider } from 'react-helmet-async'
