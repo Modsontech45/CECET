@@ -196,9 +196,9 @@
 
 :root.app-forest[data-theme='dark'] {
   /* Sidebar keeps forest identity */
-  --forest-900: #05190E;
-  --forest-700: #0a2b18;
-  --forest-500: #133d25;
+  --forest-900: #344e41;
+  --forest-700: #3d5a4c;
+  --forest-500: #4a6b5a;
 
   /* Content area → charcoal (neutral dark, no green tint) */
   --color-primary: #34c795;
