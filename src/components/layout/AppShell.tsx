@@ -62,8 +62,8 @@ function NavEntry({ item, onNavigate }: { item: NavItem; onNavigate: () => void 
 
 function Sidebar({ brand, sections, user, onLogout, onNavigate }: Omit<AppShellProps, 'children' | 'pageTitle'> & { onNavigate: () => void }) {
   return (
-    <div className="flex h-full flex-col bg-[var(--forest-900)] text-white">
-      <div className="flex items-center gap-3 px-6 pb-6 pt-7">
+    <div className="flex h-full flex-col overflow-hidden rounded-[22px] border border-white/[0.06] bg-[var(--forest-900)] text-white shadow-[0_8px_40px_rgba(5,28,18,0.35),0_2px_8px_rgba(5,28,18,0.20)]">
+      <div className="flex items-center gap-3 px-5 pb-5 pt-6 border-b border-white/[0.06]">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white p-1">
           <img src="/logos/CECT_logo_transparent.png" alt="" className="h-full w-full object-contain" />
         </span>
@@ -152,17 +152,17 @@ export function AppShell({ children, pageTitle, headerRight, ...sidebar }: AppSh
         Aller au contenu
       </a>
 
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[264px] lg:block">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[264px] lg:block p-3">
         <Sidebar {...sidebar} onNavigate={() => undefined} />
       </aside>
 
       <Dialog.Root open={drawerOpen} onOpenChange={setDrawerOpen}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-50 bg-[var(--forest-900)]/60 lg:hidden" />
-          <Dialog.Content aria-describedby={undefined} className="fixed inset-y-0 left-0 z-50 w-[280px] max-w-[86vw] outline-none data-[state=open]:animate-[slide-in_.2s_ease-out] lg:hidden">
+          <Dialog.Content aria-describedby={undefined} className="fixed inset-y-0 left-0 z-50 w-[280px] max-w-[86vw] outline-none data-[state=open]:animate-[slide-in_.2s_ease-out] lg:hidden py-3 pr-3">
             <Dialog.Title className="sr-only">Navigation</Dialog.Title>
-            <Dialog.Close className="absolute right-3 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-xl text-white/80 hover:bg-[var(--forest-500)]" aria-label="Fermer le menu">
-              <X size={20} aria-hidden />
+            <Dialog.Close className="absolute right-6 top-7 z-10 flex h-9 w-9 items-center justify-center rounded-xl text-white/60 hover:bg-[var(--forest-700)] hover:text-white" aria-label="Fermer le menu">
+              <X size={17} aria-hidden />
             </Dialog.Close>
             <Sidebar {...sidebar} onNavigate={closeDrawer} />
           </Dialog.Content>
