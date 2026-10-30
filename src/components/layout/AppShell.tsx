@@ -35,7 +35,7 @@ interface AppShellProps {
   children: ReactNode
 }
 
-const ITEM = 'relative flex min-h-[44px] items-center gap-3 rounded-xl px-3.5 text-[13.5px] font-bold transition-all duration-150'
+const ITEM = 'relative flex min-h-[46px] items-center gap-3 rounded-xl px-3.5 text-[14.5px] font-semibold transition-all duration-150 [font-family:Outfit,system-ui,sans-serif]'
 
 function NavEntry({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
   const Icon = item.icon
@@ -68,20 +68,20 @@ function Sidebar({ brand, sections, user, onLogout, onNavigate }: Omit<AppShellP
           <img src="/logos/CECT_logo_transparent.png" alt="" className="h-full w-full object-contain" />
         </span>
         <div className="min-w-0 leading-tight">
-          <p className="truncate text-[15px] font-bold">{brand.title}</p>
-          <p className="truncate text-xs text-[var(--sidebar-muted)]">{brand.subtitle}</p>
+          <p className="truncate text-[15px] font-bold [font-family:Outfit,system-ui,sans-serif]">{brand.title}</p>
+          <p className="truncate text-[11px] text-[var(--sidebar-muted)] [font-family:Outfit,system-ui,sans-serif]">{brand.subtitle}</p>
         </div>
       </div>
 
-      <nav aria-label={brand.title} className="sidebar-scroll flex-1 space-y-6 overflow-y-auto px-3 pb-6 pt-2">
+      <nav aria-label={brand.title} className="sidebar-scroll flex-1 space-y-5 overflow-y-auto px-3 pb-6 pt-3">
         {sections.map((section, index) => (
           <div key={section.title ?? index}>
             {section.title && (
-              <p className="mb-1.5 px-3.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[var(--sidebar-muted)]">
+              <p className="mb-2 px-3.5 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--sidebar-muted)] [font-family:Outfit,system-ui,sans-serif]">
                 {section.title}
               </p>
             )}
-            <ul className="space-y-0.5">
+            <ul className="space-y-1">
               {section.items.map((item) => (
                 <li key={item.to}>
                   <NavEntry item={item} onNavigate={onNavigate} />
@@ -96,8 +96,8 @@ function Sidebar({ brand, sections, user, onLogout, onNavigate }: Omit<AppShellP
         <div className="flex items-center gap-3">
           <Avatar name={user.name} tone="lime" />
           <div className="min-w-0 flex-1 leading-tight">
-            <p className="truncate text-[13px] font-extrabold">{user.name}</p>
-            <p className="truncate text-[11px] text-[var(--sidebar-muted)]">{user.roleLabel}</p>
+            <p className="truncate text-[13px] font-bold [font-family:Outfit,system-ui,sans-serif]">{user.name}</p>
+            <p className="truncate text-[11px] text-[var(--sidebar-muted)] [font-family:Outfit,system-ui,sans-serif]">{user.roleLabel}</p>
           </div>
         </div>
         <button type="button" onClick={onLogout} className="mt-2.5 flex min-h-[38px] w-full items-center justify-center gap-2 rounded-xl border border-white/10 text-[13px] font-bold text-white/70 transition-all duration-150 hover:border-white/20 hover:bg-[var(--forest-500)] hover:text-white active:scale-[0.97]">
