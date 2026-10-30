@@ -27,9 +27,32 @@ export const http = axios.create({
   headers: { Accept: 'application/json' },
 })
 
+// ── Bearer token storage (token-mode backends) ────────────────────────────────
+const TOKEN_KEY = '_cect_token'
+let bearerToken: string | null = localStorage.getItem(TOKEN_KEY)
+
+export function setToken(token: string | null): void {
+  bearerToken = token
+  if (token) {
+    localStorage.setItem(TOKEN_KEY, token)
+  } else {
+    localStorage.removeItem(TOKEN_KEY)
+  }
+}
+
+http.interceptors.request.use((config) => {
+  if (bearerToken) {
+    config.headers.Authorization = `Bearer ${bearerToken}`
+  }
+  return config
+})
+// ─────────────────────────────────────────────────────────────────────────────
+
 let csrfReady: Promise<void> | null = null
 
 export function ensureCsrfCookie(force = false): Promise<void> {
+  // Token-mode: no CSRF cookie needed
+  if (bearerToken) return Promise.resolve()
   if (force || !csrfReady) {
     csrfReady = axios
       .get(`${ORIGIN}/sanctum/csrf-cookie`, { withCredentials: true })
@@ -99,6 +122,7 @@ http.interceptors.response.use(
         return http.request(config)
       }
       if (error.response.status === 401 && !config.url?.startsWith('/auth/') && config.url !== '/me') {
+        setToken(null)
         listeners.forEach((listener) => listener())
       }
     }

@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { ApiError, get, onSessionExpired, post } from '@/lib/api'
+import { ApiError, get, onSessionExpired, post, setToken } from '@/lib/api'
 import { isAdminRole, primaryRole, type UserRole } from '@/lib/roles'
 
 interface ApiUser {
@@ -120,12 +120,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback<AuthContextValue['login']>(
     async (identifier, password) => {
-      const data = await post<{ status: string; user?: ApiUser } & Partial<ChallengeBody>>('/auth/login', { identifier, password, device_name: 'web' })
+      const data = await post<{ status: string; user?: ApiUser; access_token?: string } & Partial<ChallengeBody>>('/auth/login', { identifier, password, device_name: 'web' })
       if (data.status === 'otp_required') {
         return { status: 'otp_required', ...toChallenge(data as ChallengeBody) }
       }
-      if (!data.user) throw new ApiError(500, 'INVALID_RESPONSE', 'Réponse inattendue du serveur.')
-      const profile = await get<ApiUser>('/me')
+      if (data.access_token) setToken(data.access_token)
+      const profile = data.user ?? await get<ApiUser>('/me')
       return { status: 'authenticated', redirectTo: establish(profile) }
     },
     [establish]
@@ -167,6 +167,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       if (!(error instanceof ApiError) || error.status !== 401) console.error('Déconnexion côté serveur impossible', error)
     } finally {
+      setToken(null)
       clearSession()
     }
   }, [clearSession])
