@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  ArrowDownLeft, ArrowRight, ArrowUpRight,
+  AlertTriangle, ArrowDownLeft, ArrowRight, ArrowUpRight,
   Boxes, Calendar, Coins, ScanLine,
   TrendingDown, TrendingUp, type LucideIcon,
 } from 'lucide-react'
@@ -192,7 +192,10 @@ function Todo({ data }: { data: MemberDashboardData }) {
 
   return (
     <div className="rounded-[20px] border border-[var(--tone-warning-fg)]/20 bg-[var(--tone-warning-bg)] p-5">
-      <p className="mb-3 text-[11px] font-black uppercase tracking-widest text-[var(--tone-warning-fg)]">⚠ Actions requises</p>
+      <div className="mb-3 flex items-center gap-2">
+        <AlertTriangle size={13} className="shrink-0 text-[var(--tone-warning-fg)]" aria-hidden />
+        <p className="text-[11px] font-black uppercase tracking-widest text-[var(--tone-warning-fg)]">Actions requises</p>
+      </div>
       <ul className="space-y-2">
         {[...awaiting, ...ops].slice(0, 4).map((item) => (
           <li key={item.id} className="flex items-center justify-between gap-3">
@@ -311,7 +314,7 @@ export default function HomePage() {
       <Helmet><title>Accueil — CECT Togo</title></Helmet>
 
       <PageHeader
-        title={`Bonjour${firstName ? `, ${firstName}` : ''} 👋`}
+        title={`Bonjour${firstName ? `, ${firstName}` : ''}`}
         description="Votre tableau de bord financier"
       />
 

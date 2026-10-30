@@ -35,19 +35,21 @@ interface AppShellProps {
   children: ReactNode
 }
 
-const ITEM = 'relative flex min-h-[44px] items-center gap-3 rounded-xl px-3.5 text-[14px] font-semibold transition-colors'
+const ITEM = 'relative flex min-h-[44px] items-center gap-3 rounded-xl px-3.5 text-[13.5px] font-bold transition-all duration-150'
 
 function NavEntry({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
   const Icon = item.icon
   return (
-    <NavLink to={item.to} end={item.end} onClick={onNavigate} className={({ isActive }) => cn(ITEM, isActive ? 'bg-[var(--forest-500)] text-white' : 'text-white/70 hover:bg-[var(--forest-700)] hover:text-white')}>
+    <NavLink to={item.to} end={item.end} onClick={onNavigate} className={({ isActive }) => cn(ITEM, isActive ? 'bg-[var(--forest-500)]/80 text-white' : 'text-white/60 hover:bg-[var(--forest-700)] hover:text-white/90')}>
       {({ isActive }) => (
         <>
-          {isActive && <span aria-hidden className="absolute -left-3 top-2.5 h-6 w-[3px] rounded-r-full bg-[var(--lime)]" />}
-          <Icon size={18} aria-hidden className={cn('shrink-0', isActive ? 'text-[var(--lime)]' : 'opacity-80')} />
+          {isActive && <span aria-hidden className="absolute -left-3 top-3 h-5 w-[3px] rounded-r-full bg-[var(--lime)]" />}
+          <span className={cn('flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors', isActive ? 'bg-[var(--lime)]/15' : '')}>
+            <Icon size={16} aria-hidden className={cn(isActive ? 'text-[var(--lime)]' : 'opacity-70')} />
+          </span>
           <span className="flex-1 truncate">{item.label}</span>
           {item.badge !== undefined && item.badge > 0 && (
-            <span className="inline-flex min-w-[22px] items-center justify-center rounded-full bg-[var(--lime)] px-1.5 py-0.5 text-[11px] font-bold text-[var(--forest-900)]">
+            <span className="inline-flex min-w-[20px] items-center justify-center rounded-full bg-[var(--lime)] px-1.5 py-0.5 text-[10px] font-black text-white">
               {item.badge}
               <span className="sr-only"> à traiter</span>
             </span>
@@ -71,11 +73,15 @@ function Sidebar({ brand, sections, user, onLogout, onNavigate }: Omit<AppShellP
         </div>
       </div>
 
-      <nav aria-label={brand.title} className="sidebar-scroll flex-1 space-y-7 overflow-y-auto px-3 pb-6 pt-2">
+      <nav aria-label={brand.title} className="sidebar-scroll flex-1 space-y-6 overflow-y-auto px-3 pb-6 pt-2">
         {sections.map((section, index) => (
           <div key={section.title ?? index}>
-            {section.title && <p className="mb-2 px-3.5 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--sidebar-muted)]">{section.title}</p>}
-            <ul className="space-y-1">
+            {section.title && (
+              <p className="mb-1.5 px-3.5 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[var(--sidebar-muted)]">
+                {section.title}
+              </p>
+            )}
+            <ul className="space-y-0.5">
               {section.items.map((item) => (
                 <li key={item.to}>
                   <NavEntry item={item} onNavigate={onNavigate} />
@@ -86,16 +92,16 @@ function Sidebar({ brand, sections, user, onLogout, onNavigate }: Omit<AppShellP
         ))}
       </nav>
 
-      <div className="m-3 rounded-2xl bg-[var(--forest-700)] p-3">
+      <div className="mx-3 mb-3 rounded-2xl border border-white/8 bg-[var(--forest-700)]/70 p-3">
         <div className="flex items-center gap-3">
           <Avatar name={user.name} tone="lime" />
           <div className="min-w-0 flex-1 leading-tight">
-            <p className="truncate text-sm font-bold">{user.name}</p>
-            <p className="truncate text-xs text-[var(--sidebar-muted)]">{user.roleLabel}</p>
+            <p className="truncate text-[13px] font-extrabold">{user.name}</p>
+            <p className="truncate text-[11px] text-[var(--sidebar-muted)]">{user.roleLabel}</p>
           </div>
         </div>
-        <button type="button" onClick={onLogout} className="mt-3 flex min-h-[40px] w-full items-center justify-center gap-2 rounded-xl border border-white/15 text-sm font-semibold text-white/90 transition-colors hover:bg-[var(--forest-500)]">
-          <LogOut size={15} aria-hidden />
+        <button type="button" onClick={onLogout} className="mt-2.5 flex min-h-[38px] w-full items-center justify-center gap-2 rounded-xl border border-white/10 text-[13px] font-bold text-white/70 transition-all duration-150 hover:border-white/20 hover:bg-[var(--forest-500)] hover:text-white active:scale-[0.97]">
+          <LogOut size={14} aria-hidden />
           Déconnexion
         </button>
       </div>
@@ -164,11 +170,11 @@ export function AppShell({ children, pageTitle, headerRight, ...sidebar }: AppSh
       </Dialog.Root>
 
       <div className="lg:pl-[264px]">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-[var(--color-border)] bg-[var(--dash-bg)] px-4 sm:px-8">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-[var(--color-border)] bg-[var(--dash-bg)]/95 px-4 backdrop-blur-sm sm:px-8">
           <button type="button" onClick={() => setDrawerOpen(true)} className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--dash-card)] lg:hidden" aria-label="Ouvrir le menu">
             <Menu size={19} aria-hidden />
           </button>
-          <p className="hidden min-w-0 flex-1 truncate text-[15px] font-bold text-[var(--color-text)] lg:block">{pageTitle}</p>
+          <p className="hidden min-w-0 flex-1 truncate text-[14px] font-extrabold tracking-tight text-[var(--color-text)] lg:block">{pageTitle}</p>
           <p className="flex min-w-0 flex-1 items-center gap-2 text-[15px] font-bold text-[var(--color-text)] lg:hidden">
             <img src="/logos/CECT_logo_transparent.png" alt="" className="h-7 w-7 object-contain" />
             CECT

@@ -152,69 +152,75 @@
   }
 }
 
-/* ── Espaces connectés (membre) : identité « Forêt & lime », aplats uniquement ── */
+/* ── Espaces connectés (membre) : identité « Forêt & or », aplats uniquement ── */
 :root.app-forest {
   --forest-900: #051c12;
   --forest-700: #072f1f;
   --forest-500: #1a3e30;
-  --lime: #b4f105;
-  --lime-hover: #c1f824;
-  --sidebar-muted: #879a91;
+
+  /* Vault gold — remplace le vert lime, plus mature/financier */
+  --lime:       #C9922A;
+  --lime-hover: #B8821F;
+  --sidebar-muted: #7a9185;
 
   --color-primary: #0b6b45;
   --color-primary-hover: #09583a;
-  --color-bg: #ffffff;
-  --color-surface: #f4f6f5;
+  --color-bg: #f7faf8;
+  --color-surface: #edf2ef;
   --color-text: #0b130f;
-  --color-text-muted: #6c7e75;
-  --color-border: #e9efef;
+  --color-text-muted: #556b60;
+  --color-border: #dde6e1;
 
-  --dash-bg: #f4f6f5;
+  --dash-bg: #edf2ef;
   --dash-card: #ffffff;
-  --shadow-card: none;
-  --shadow-pop: 0 12px 32px rgba(5, 28, 18, 0.14);
+  --shadow-card: 0 1px 3px rgba(5, 28, 18, 0.06), 0 8px 24px -8px rgba(5, 28, 18, 0.10);
+  --shadow-pop: 0 16px 40px -12px rgba(5, 28, 18, 0.22);
 
   --chart-1: #0b6b45;
-  --chart-2: #b4f105;
+  --chart-2: #C9922A;
   --chart-3: #0e7490;
   --chart-4: #7c3aed;
   --chart-5: #db2777;
-  --chart-grid: #e9efef;
-  --chart-track: #edf2ef;
+  --chart-grid: #dde6e1;
+  --chart-track: #e8eeea;
 
-  --tone-success-bg: #dcfce7;
-  --tone-success-fg: #166534;
-  --tone-warning-bg: #ffedd5;
-  --tone-warning-fg: #9a3412;
+  --tone-success-bg: #d6f5e3;
+  --tone-success-fg: #0d5c38;
+  --tone-warning-bg: #fef3cd;
+  --tone-warning-fg: #8a4e00;
   --tone-danger-bg: #fee2e2;
   --tone-danger-fg: #b42318;
-  --tone-info-bg: #e0f2f7;
+  --tone-info-bg: #ddf0f9;
   --tone-info-fg: #0b6179;
 }
 
 :root.app-forest[data-theme='dark'] {
   --color-primary: #0b8a5a;
   --color-primary-hover: #0a7a50;
-  --color-bg: #07120d;
-  --color-surface: #0c1f16;
-  --color-text: #e9f1ec;
-  --color-text-muted: #8fa79b;
-  --color-border: #17352a;
+  --color-bg: #060e09;
+  --color-surface: #0b1a10;
+  --color-text: #e4ede7;
+  --color-text-muted: #7a9185;
+  --color-border: #14302200;
 
-  --dash-bg: #07120d;
-  --dash-card: #0c1f16;
-  --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --dash-bg: #060e09;
+  --dash-card: #0b1a10;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35), 0 8px 24px -8px rgba(0, 0, 0, 0.50);
+  --shadow-pop: 0 16px 40px -12px rgba(0, 0, 0, 0.60);
+
+  --color-border: #183022;
+  --chart-track: #0f2318;
 
   --chart-1: #34c795;
-  --chart-grid: #17352a;
-  --chart-track: #11291f;
+  --chart-2: #E0A83A;
+  --chart-grid: #183022;
 
-  --tone-success-bg: rgba(52, 199, 149, 0.14);
+  --tone-success-bg: rgba(52, 199, 149, 0.13);
   --tone-success-fg: #5fddb0;
-  --tone-warning-bg: rgba(249, 115, 22, 0.16);
-  --tone-warning-fg: #fdba74;
-  --tone-danger-bg: rgba(248, 113, 113, 0.14);
+  --tone-warning-bg: rgba(201, 146, 42, 0.15);
+  --tone-warning-fg: #E0A83A;
+  --tone-danger-bg: rgba(248, 113, 113, 0.13);
   --tone-danger-fg: #fca5a5;
-  --tone-info-bg: rgba(56, 189, 248, 0.14);
+  --tone-info-bg: rgba(56, 189, 248, 0.13);
   --tone-info-fg: #7dd3fc;
 }
