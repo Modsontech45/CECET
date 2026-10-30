@@ -195,28 +195,29 @@
 }
 
 :root.app-forest[data-theme='dark'] {
+  /* Sidebar keeps forest identity */
   --forest-900: #05190E;
   --forest-700: #0a2b18;
   --forest-500: #133d25;
-  --color-primary: #0b8a5a;
-  --color-primary-hover: #0a7a50;
-  --color-bg: #060e09;
-  --color-surface: #0b1a10;
-  --color-text: #e4ede7;
-  --color-text-muted: #7a9185;
-  --color-border: #14302200;
 
-  --dash-bg: #060e09;
-  --dash-card: #0b1a10;
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35), 0 8px 24px -8px rgba(0, 0, 0, 0.50);
-  --shadow-pop: 0 16px 40px -12px rgba(0, 0, 0, 0.60);
+  /* Content area → charcoal (neutral dark, no green tint) */
+  --color-primary: #34c795;
+  --color-primary-hover: #2db383;
+  --color-bg: #141414;
+  --color-surface: #1c1c1c;
+  --color-text: #f0f0f0;
+  --color-text-muted: #9a9a9a;
+  --color-border: rgba(255, 255, 255, 0.08);
 
-  --color-border: #183022;
-  --chart-track: #0f2318;
+  --dash-bg: #141414;
+  --dash-card: #1c1c1c;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.5), 0 8px 24px -8px rgba(0, 0, 0, 0.65);
+  --shadow-pop: 0 16px 40px -12px rgba(0, 0, 0, 0.75);
 
+  --chart-track: #252525;
+  --chart-grid: rgba(255, 255, 255, 0.06);
   --chart-1: #34c795;
   --chart-2: #E0A83A;
-  --chart-grid: #183022;
 
   --tone-success-bg: rgba(52, 199, 149, 0.13);
   --tone-success-fg: #5fddb0;
